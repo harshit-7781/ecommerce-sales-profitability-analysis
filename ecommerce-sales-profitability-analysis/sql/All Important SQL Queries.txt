@@ -1,0 +1,228 @@
+1-- Calculate Year-over-Year Growth (Previous year with this year)
+
+
+select 
+	`Order Year`, 
+	SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit,
+    LAG(SUM(`Sales`)) OVER (ORDER BY `Order Year`) as Previous_Year_Sales,
+    LAG(SUM(`Profit`)) OVER (ORDER BY `Order Year`) as Previous_Year_Profit
+FROM Orders 
+GROUP BY `Order Year`
+ORDER BY `Order Year`;
+
+
+
+2-- Calculating the Sales growth % and Profit growth %
+
+
+select 
+	`Order Year`, 
+	SUM(Sales) AS Total_Sales,
+    SUM(Profit) AS Total_Profit,
+    LAG(SUM(`Sales`)) OVER (ORDER BY `Order Year`) as Previous_Year_Sales,
+    LAG(SUM(`Profit`)) OVER (ORDER BY `Order Year`) as Previous_Year_Profit,
+	(
+        (
+            SUM(Sales) -
+            LAG(SUM(Sales)) OVER (ORDER BY `Order Year`)
+        )
+        /
+        LAG(SUM(Sales)) OVER (ORDER BY `Order Year`)
+    ) * 100 AS `Sales_Growth %`,
+    (
+        (
+            SUM(Profit) -
+            LAG(SUM(Profit)) OVER (ORDER BY `Order Year`)
+        )
+        /
+        LAG(SUM(Profit)) OVER (ORDER BY `Order Year`)
+    ) * 100 AS `Profit_Growth %`
+FROM Orders 
+GROUP BY `Order Year`
+ORDER BY `Order Year`;
+
+
+3-- Categorising Sales and Profit acc to the Category 
+
+
+select `Category`,
+	sum(Sales) as Total_Sales,
+    sum(Profit) as Total_Profit,
+    sum(Quantity) as Total_Quantity 
+from Orders 
+group by `Category` ; 
+
+
+
+4-- calculating Profit_Margin_% for each Category 
+
+
+SELECT
+    `Category`,
+    SUM(`Sales`) AS Total_Sales,
+    SUM(`Profit`) AS Total_Profit,
+    SUM(`Quantity`) AS Total_Quantity,
+    ROUND(
+        SUM(`Profit`) / SUM(`Sales`) * 100,
+        2
+    ) AS `Profit Margin %`
+FROM Orders
+GROUP BY `Category`;
+
+
+
+5-- finding sales , profit , quantity and profit Margin% for sub_category 
+
+
+select `Sub-Category`,
+	sum(Sales) as Total_Sales,
+    sum(Profit) as Total_Profit,
+    sum(Quantity) as Total_Quantity,
+    round(
+		Sum(Profit)/sum(Sales)*100,
+        2
+	) as `Profit_Margin%`
+from Orders 
+group by `Sub-Category` ;
+
+
+
+6-- finding sales , profit , quantity and profit Margin where Profit < 0 %
+
+
+select `Sub-Category`,
+	sum(Sales) as Total_Sales,
+    sum(Profit) as Total_Profit,
+    sum(Quantity) as Total_Quantity,
+    round(
+		Sum(Profit)/sum(Sales)*100,
+        2
+	) as `Profit_Margin%`
+from Orders 
+group by `Sub-Category` 
+having sum(`Profit`) < 0  ;
+
+
+
+
+7-- Do discounts reduce profitability? 
+
+
+select `Discount %`,
+	sum(Sales),
+    sum(Profit),
+	round(sum(Profit)/sum(Sales)*100 ,2 )as `Profit Margin %`
+from Orders
+Group by `Discount %`
+Order by `Discount %`;
+
+
+
+
+8-- states generating overall loss 
+
+
+select `State/Province`,
+	sum(Sales),
+    sum(Profit),
+    round(sum(Profit)/sum(Sales)*100 , 2) as `Profit Margin %`
+from orders 
+group by `State/Province`
+having Sum(Profit)< 0
+order by Sum(Profit)asc ;
+
+
+
+9-- Sub_ catehories that management should promote 
+
+select `Sub-Category`,
+	sum(Sales),
+    sum(Profit),
+    sum(Quantity),
+    round(sum(Profit)/sum(sales)*100,2) as `Profit Margin %`
+from orders
+group by `Sub-Category`
+order by Sum(Profit) desc;
+
+
+
+
+10-- finding products that have more than avg sales but still are making 0 or less than 0 profit       
+
+
+with Product_Performance as (
+	select `Product Name`,
+		sum(Sales) as Total_Sales,
+		sum(Profit)as Total_Profit,
+		sum(Quantity)as Total_Quantity
+	from orders
+	group by `Product Name`
+)
+
+select `Product Name`,
+		Total_Sales,
+		Total_Profit, 
+		Total_Quantity,
+		round(Total_Profit/Total_Sales*100,2) as `Profit Margin %`
+	from Product_Performance
+	WHERE Total_Sales > (
+    SELECT AVG(Total_Sales)
+    FROM Product_Performance
+)
+AND Total_Profit <= 0
+ORDER BY Total_Profit ASC;
+
+
+
+
+11-- Which Regions Need Attention?
+
+
+select Region,
+	sum(Sales)as Total_Sales,
+    Sum(Profit)as Total_Profit, 
+    sum(Quantity)as Total_Quantity, 
+    round(	sum(Profit)/sum(Sales)*100 , 2) as `Profit_Margin %`
+from orders
+Group by Region
+order by sum(Profit) desc;
+
+
+
+
+12-- Shipping Performance
+
+
+select `Ship Mode`,
+	sum(Sales)as Total_Sales,
+    sum(Profit)as Total_Profit,
+    sum(Quantity)as Total_Quantity,
+    avg(`Shipping Time`),
+    round(sum(Profit)/sum(Sales)*100,2)as 'Profit Margin %'
+from orders 
+group by `Ship Mode`
+order by avg(`Shipping Time`);
+
+
+
+
+
+13-- seasonal Sales Performance 
+
+
+select `Order Month`,
+	`Month Name`,
+	sum(Sales)as Total_Sales,
+    sum(Profit)as Total_Profit,
+    sum(Quantity)as Total_Quantity,
+    round(sum(Profit)/sum(Sales)*100,2)as 'Profit Margin %'
+from orders 
+group by `Order Month`,
+	`Month Name`
+order by (Sum(Profit));
+
+
+
+
+

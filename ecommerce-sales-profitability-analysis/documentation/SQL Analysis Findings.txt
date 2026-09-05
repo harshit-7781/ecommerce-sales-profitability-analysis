@@ -1,0 +1,25 @@
+SQL Analysis Findings
+
+-- Performed year-over-year sales and profit analysis using SQL window functions (LAG()), identifying 21.44% sales growth versus 16.04% profit growth in 2026, indicating that profit growth was lagging behind revenue growth.
+
+-- Identified Technology as the highest-performing category, generating approximately 839.9K in sales and 146.5K in profit, with a 17.45% profit margin.
+
+-- Identified Furniture as a major profitability concern, generating approximately 754.7K in sales but only 19.7K in profit, resulting in a significantly lower 2.61% profit margin.
+
+-- Performed sub-category profitability analysis and identified Tables, Bookcases, and Supplies as loss-making sub-categories, with Tables recording the largest loss of approximately 17.75K.
+
+-- Identified Tables as a high-sales but loss-making sub-category, generating approximately 208K in sales while operating at an -8.53% profit margin, highlighting the need for pricing, discount, or cost optimization.
+
+-- Analyzed profitability across discount levels and found that 30%+ discount levels were associated with negative profit margins, with margins declining to -180.01% at an 80% discount level.
+
+-- Identified 12 loss-making states/provinces through SQL aggregation and HAVING analysis, with Texas, Ohio, Pennsylvania, and Illinois among the largest contributors to overall losses.
+
+-- Identified West as the strongest-performing region, generating approximately 110.8K in profit at a 14.98% margin, while the Central region had the lowest margin at 7.92%.
+
+-- Performed shipping-mode profitability analysis and found that Standard Class generated the highest absolute profit of approximately 168.2K, while First Class achieved the highest profit margin at 13.93%.
+
+-- Analyzed monthly sales and profitability using SQL grouping and identified November and December as the highest-sales months, with December generating the highest monthly profit of approximately 44.2K.
+
+-- Used SQL aggregations, GROUP BY, HAVING, ORDER BY, CTEs, subqueries, and window functions (LAG) to perform multi-dimensional profitability and performance analysis.
+
+-- Translated SQL findings into business recommendations focused on discount optimization, product profitability, regional performance, shipping strategy, and seasonal planning.
